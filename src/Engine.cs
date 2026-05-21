@@ -228,7 +228,7 @@ namespace WinHome
             if (config.Vim != null) allExtensions["vim"] = config.Vim;
             if (config.Vscode != null) allExtensions["vscode"] = config.Vscode;
             if (config.Obsidian != null) allExtensions["obsidian"] = config.Obsidian;
-            if (config.Ohmyposh != null) allExtensions["ohmyposh"] = config.Ohmyposh
+            if (config.Ohmyposh != null) allExtensions["ohmyposh"] = config.Ohmyposh;
 
             if (allExtensions.Any())
             {
