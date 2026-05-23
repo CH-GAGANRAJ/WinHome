@@ -457,6 +457,9 @@ namespace WinHome.Tests
         // snap_assist_flyout
         [InlineData("snap_assist_flyout", "true", "EnableSnapAssistFlyout", 1)]
         [InlineData("snap_assist_flyout", "false", "EnableSnapAssistFlyout", 0)]
+        // clipboard_history
+        [InlineData("clipboard_history", "true", "EnableClipboardHistory", 1)]
+        [InlineData("clipboard_history", "false", "EnableClipboardHistory", 0)]
         public async Task GetTweaksAsync_Should_Return_Expected_Tweak(string key, string value, string expectedTweakName, object expectedValue)
         {
             var settings = new Dictionary<string, object> { { key, value } };
@@ -527,6 +530,9 @@ namespace WinHome.Tests
         // snap_assist_flyout
         [InlineData("snap_assist_flyout", @"HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced", "EnableSnapAssistFlyout", 1, true)]
         [InlineData("snap_assist_flyout", @"HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced", "EnableSnapAssistFlyout", 0, false)]
+        // clipboard_history
+        [InlineData("clipboard_history", @"HKCU\Software\Microsoft\Clipboard", "EnableClipboardHistory", 1, true)]
+        [InlineData("clipboard_history", @"HKCU\Software\Microsoft\Clipboard", "EnableClipboardHistory", 0, false)]
         public async Task GetCapturedSettingsAsync_Should_Capture_Setting(string key, string path, string name, object registryValue, object expectedCapturedValue)
         {
             _mockRegistryService.Setup(r => r.Read(path, name)).Returns(registryValue);
@@ -620,6 +626,9 @@ namespace WinHome.Tests
 
             var key2 = _service.GetFriendlyName(@"HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced", "TaskbarAl");
             Assert.Equal("taskbar_alignment", key2);
+
+            var key3 = _service.GetFriendlyName(@"HKCU\Software\Microsoft\Clipboard", "EnableClipboardHistory");
+            Assert.Equal("clipboard_history", key3);
         }
 
         [Fact]
