@@ -50,24 +50,44 @@ namespace WinHome.Tests
     }
 
     [Fact]
-    public void Apply_TargetExists_CreatesBackup()
+    public void Apply_TargetExists_CreatesTimestampedBackup()
     {
-      // Arrange
       var sourcePath = Path.GetTempFileName();
       var targetPath = Path.GetTempFileName();
-      var dotfileConfig = new DotfileConfig { Src = sourcePath, Target = targetPath };
 
-      // Act
+      File.WriteAllText(targetPath, "original-content");
+
+      var dotfileConfig = new DotfileConfig
+      {
+        Src = sourcePath,
+        Target = targetPath
+      };
+
       _dotfileService.Apply(dotfileConfig, false);
 
-      // Assert
-      Assert.True(File.Exists(targetPath + ".bak"));
+      var backups = Directory.GetFiles(
+        Path.GetDirectoryName(targetPath)!,
+        Path.GetFileName(targetPath) + ".*.bak"
+      );
 
-      // Cleanup
+      Assert.Single(backups);
+
+      Assert.Equal(
+        "original-content",
+        File.ReadAllText(backups[0])
+      );
+
       File.Delete(sourcePath);
+
       if (File.Exists(targetPath))
+      {
         File.Delete(targetPath);
-      File.Delete(targetPath + ".bak");
+      }
+
+      foreach (var backup in backups)
+      {
+        File.Delete(backup);
+      }
     }
 
     [Fact]
@@ -77,6 +97,7 @@ namespace WinHome.Tests
       var sourcePath = Path.GetTempFileName();
       var targetPath = Path.GetTempFileName();
       var dotfileConfig = new DotfileConfig { Src = sourcePath, Target = targetPath };
+
       if (File.Exists(targetPath))
         File.Delete(targetPath);
 
@@ -86,6 +107,7 @@ namespace WinHome.Tests
       // Assert
       Assert.True(File.Exists(targetPath));
       var fileInfo = new FileInfo(targetPath);
+
       if (fileInfo.LinkTarget is not null)
       {
         Assert.Equal(sourcePath, fileInfo.LinkTarget);
@@ -98,6 +120,7 @@ namespace WinHome.Tests
 
       // Cleanup
       File.Delete(sourcePath);
+
       if (File.Exists(targetPath))
         File.Delete(targetPath);
     }

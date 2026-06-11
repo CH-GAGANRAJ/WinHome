@@ -42,8 +42,12 @@ namespace WinHome.Services.System
 
         if (File.Exists(targetPath))
         {
-          File.Move(targetPath, targetPath + ".bak", true);
-          _logger.LogInfo($"[Dotfile] Backup created.");
+          string? backupPath = BackupService.CreateBackup(targetPath);
+
+          if (backupPath is not null)
+          {
+            _logger.LogInfo($"[Dotfile] Backup created at {backupPath}");
+          }
         }
 
         string? parentDir = Path.GetDirectoryName(targetPath);
